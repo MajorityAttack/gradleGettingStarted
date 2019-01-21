@@ -1,0 +1,64 @@
+
+plugins {
+    id 'java'
+    id 'com.gradle.build-scan' version '2.1'
+    id 'base'
+    id 'org.asciidoctor.convert' version '1.5.6' apply false
+}
+
+//Set the jar version when build
+version = '0.23.0'
+//Set the manifest info in the jar file
+jar {
+    manifest {
+        attributes('Implementation-Title': project.name,
+                   'Implementation-Version': project.version)
+    }
+}
+//How to list the files in the jar files
+/*
+ * $ jar tf build/libs/building-java-libraries.jar
+ */
+
+//How to extract files in the jar files
+/*
+ * $ jar xf build/libs/building-java-libraries-0.1.0.jar META-INF/MANIFEST.MF
+ */
+
+
+//Multi Projects needed
+allprojects {
+    repositories {
+        jcenter()
+    }
+}
+
+subprojects {
+    version = '1.0'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'com.google.guava:guava:23.0'
+    testCompile 'junit:junit:4.12'
+}
+
+buildScan {
+    termsOfServiceUrl = 'https://gradle.com/terms-of-service'
+    termsOfServiceAgree = 'yes'
+
+    publishAlways()
+}
+
+task copy(type: Copy, group: "Custom", description: "Copies sources to the dest directory") {
+    from "src"
+    into "dest"
+}
+
+task zip(type: Zip, group: "Archive", description: "Archives sources in a zip file") {
+    from "src"
+    setArchiveName "gradle-test-1.0.zip"
+}
